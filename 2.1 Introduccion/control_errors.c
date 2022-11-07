@@ -8,11 +8,11 @@
 
 
 int main(){
- 
+
 
     if ( setuid(0) == -1){
         perror(NULL);
-        printf("Codigo de error :%d \t Mensaje asociado: %s\n",errno, strerror(errno));
+        printf("Codigo de error : %d \t Mensaje asociado: %s\n", errno, strerror(errno));
     }
 
 
