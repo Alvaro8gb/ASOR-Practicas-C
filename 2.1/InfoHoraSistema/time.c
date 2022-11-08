@@ -9,14 +9,13 @@ int time_seconds(){
     time_t seconds = time(NULL);
 
     if ( seconds != -1){
-        printf("Horas desde el EPOCH: %ld\n", seconds);
+        printf("Seconds since EPOCH: %ld\n", seconds);
         return seconds;
 
     }else{
-        printf("Error obteniendo la hora");
+        printf("Error using time(3)");
         return -1;
     }
-
 
 }
 
@@ -30,7 +29,7 @@ int loop_to_size(){
         return 1;
     }
 
-    for ( int i; i< 1000000;i++){
+    for ( int i; i < 1000000; i++){
         sum +=i;
     }
 
