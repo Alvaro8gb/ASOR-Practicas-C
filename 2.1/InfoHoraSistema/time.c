@@ -61,6 +61,8 @@ void show_current_year(){
             printf("Error showing time format\n");
         }
 
+        free(time_format);
+
     }
 
 }

@@ -17,7 +17,6 @@ int main(){
     //  si el id real y el efectivo es diferente seguro q tienen el bit setuid activo.
 
 
-
     errno = 0;
     struct passwd *info  = getpwuid(id_real);
     if ( errno == 0){

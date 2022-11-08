@@ -20,7 +20,7 @@ int path_info(char path[]){
 
     sys_error(pathconf(path,_PC_LINK_MAX),"EL numero máximo de enlaces","Error viendo el numero máximo de enlaces");
     sys_error(pathconf(path,_PC_PATH_MAX),"Tamaño máximo de una ruta","Error viendo el tamaño máximo de una ruta");
-    sys_error(pathconf(path,_PC_NAME_MAX),"Tamaño máximo del nombre de un fichero","Error viendo el nombre de un fichero");
+    sys_error(pathconf(path,_PC_NAME_MAX),"Tamaño máximo del nombre de un fichero","Error viendo el tamaño maximo del nombre de un fichero");
 
 
     return 0;
@@ -31,7 +31,7 @@ int sysconf_info(){
 
     sys_error(sysconf(_SC_ARG_MAX), "Numero maximo de argumentos", "Error al sacar le numero maximo de argumentos");
     sys_error(sysconf(_SC_CHILD_MAX), "Numero maximo de hijos", "Error al sacar le numero maximo de hijos");
-    sys_error(sysconf(_SC_OPEN_MAX), "Numero maximo de hijos", "Error al sacar le numero maximo de hijos");
+    sys_error(sysconf(_SC_OPEN_MAX), "Numero maximo de ficheros abiertos", "Error al sacar el numero maximo de ficheros abiertos");
     
 
     return 0;
