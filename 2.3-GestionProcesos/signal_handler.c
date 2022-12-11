@@ -47,7 +47,9 @@ int main(){
    if (sigaction(SIGINT, &sa, NULL) == -1) handle_error("Error in sigaction(SIGINT)");
    if (sigaction(SIGTSTP, &sa, NULL) == -1) handle_error("Error in sigaction(SIGTSTP)");
  
-   while (N_SIGINT + N_SIGTSTP < 10 ){}
+   while (N_SIGINT + N_SIGTSTP < 10 ){
+      sigsuspend(&sa.sa_mask);
+   }
  
    if ( sigprocmask(SIG_BLOCK, &block_signals, NULL) == -1) handle_error("Error in sigaction(SIGTSTP)");
  
