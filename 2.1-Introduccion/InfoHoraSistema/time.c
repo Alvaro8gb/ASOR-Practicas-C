@@ -53,7 +53,7 @@ void show_current_year(){
         int max_format = 200;
         char * time_format = malloc(max_format);
 
-        if ( strftime(time_format, max_format,"%A, %d de %B de %G, %R" , t) > 0){
+        if ( strftime(time_format, max_format, "%A, %d de %B de %G, %R" , t) > 0){
             printf("Nuestro formato: %s\n", time_format);
 
         }else{
