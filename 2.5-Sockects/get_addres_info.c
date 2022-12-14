@@ -5,8 +5,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#define handle_error(msg) \
-          do { perror(msg); exit(EXIT_FAILURE); } while (0)
+#define handle_error_gai(code_error, msg) \
+          do { fprintf(stderr, "Code error: %d msg: %s\n", code_error, gai_strerror(code_error)); exit(EXIT_FAILURE); } while (0)
 
 #define USAGE  "Usage: %s addr_dir\n"
 
@@ -23,18 +23,20 @@ int main(int argc, char **argv){
     }
 
     struct addrinfo * info_array = NULL;
-    
+    int code_error = -1;
+
     //Specifying  hints  as  NULL  is  equivalent  to setting ai_socktype and
     //   ai_protocol  to  0;   ai_family   to   AF_UNSPEC;   and   ai_flags   to
     //   (AI_V4MAPPED | AI_ADDRCONFIG)
 
-    if ( getaddrinfo(argv[1], NULL, NULL, &info_array) != 0) handle_error("Error in getaddrinfo()");
+    if ( (code_error = getaddrinfo(argv[1], NULL, NULL, &info_array)) != 0) handle_error_gai(code_error, "Error in getaddrinfo()");
 
     printf("host\tfamlily\tsocktype\n");
     char host[MAX_HOST];
+
     for (struct addrinfo *rp = info_array; rp != NULL; rp = rp->ai_next) {
 
-        if ( getnameinfo(rp->ai_addr, rp->ai_addrlen, host, MAX_HOST, NULL, 0, NI_NUMERICHOST) != 0) handle_error("Error in getnameinfo()");
+        if ( (code_error = getnameinfo(rp->ai_addr, rp->ai_addrlen, host, MAX_HOST, NULL, 0, NI_NUMERICHOST)) != 0) handle_error_gai(code_error, "Error in getnameinfo()");
             
         printf("%s\t%d\t%d\n",host, rp->ai_family, rp->ai_socktype);
     }
