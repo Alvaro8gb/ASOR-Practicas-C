@@ -8,7 +8,7 @@
 #include <time.h>
 
 #define handle_error_gai(code_error, msg) \
-          do { fprintf(stderr, "Code error: %d msg: %s\n", code_error, gai_strerror(code_error)); exit(EXIT_FAILURE); } while (0)
+          do { fprintf(stderr, "Code error: %d msg: %s : %s\n", code_error, msg, gai_strerror(code_error)); exit(EXIT_FAILURE); } while (0)
 
 #define handle_error(msg) \
           do { perror(msg); exit(EXIT_FAILURE); } while (0)

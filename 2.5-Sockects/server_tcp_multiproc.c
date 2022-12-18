@@ -61,21 +61,30 @@ int main(int argc, char **argv){
     do{
 
         client_sd = accept(tcp_sd, (struct sockaddr *) &client_addr, &client_addrlen ) ;
-        
         if ( client_sd == -1) handle_error("Error in accept()");
+        
+        int ret = fork();
 
-        if((code_error = getnameinfo((struct sockaddr *) &client_addr, client_addrlen, host, NI_MAXHOST, serv, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV)) != 0) handle_error_gai(code_error,"Error in getnameinfo()");
-        
-        printf("Conexión desde %s  %s \n", host, serv);
-        
-        while( (bytes_read = recv(client_sd, buf, BUFF_MESSAGE, 0)) > 0){
+        if( ret == 0){ // Hijos procesan las conexiones
+
+            if((code_error = getnameinfo((struct sockaddr *) &client_addr, client_addrlen, host, NI_MAXHOST, serv, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV)) != 0) handle_error_gai(code_error,"Error in getnameinfo()");
             
-            if( send(client_sd, buf, bytes_read, 0) == -1) handle_error("Error in sendto()");
+            printf("Conexión desde %s  %s pid: %d\n", host, serv, getpid());
+            
+            while( (bytes_read = recv(client_sd, buf, BUFF_MESSAGE, 0)) > 0){
+                
+                if( send(client_sd, buf, bytes_read, 0) == -1) handle_error("Error in sendto()");
 
+            }
+
+            close(client_sd);
+            printf("Conexión terminada desde %s %s pid: %d\n", host, serv, getpid());
+
+            exit(EXIT_SUCCESS);
+        
+        }else{ // Padre 
+            close(client_sd);
         }
-
-        close(client_sd);
-        printf("Conexión terminada\n");
 
     }while(1);
 

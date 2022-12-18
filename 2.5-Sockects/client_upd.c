@@ -8,9 +8,8 @@
 #include <time.h>
 #include <sys/select.h>
 
-
 #define handle_error_gai(code_error, msg) \
-          do { fprintf(stderr, "Code error: %d msg: %s\n", code_error, gai_strerror(code_error)); exit(EXIT_FAILURE); } while (0)
+          do { fprintf(stderr, "Code error: %d msg: %s : %s\n", code_error, msg, gai_strerror(code_error)); exit(EXIT_FAILURE); } while (0)
 
 #define handle_error(msg) \
           do { perror(msg); exit(EXIT_FAILURE); } while (0)
@@ -28,7 +27,7 @@ int main(int argc, char **argv){
 
     char msg[MAX_BUFFER];
 
-    struct addrinfo * server_addr = NULL;
+    struct addrinfo * result = NULL;
     struct addrinfo hints;
     char buf[3] = "c\n\0";
 
@@ -38,13 +37,14 @@ int main(int argc, char **argv){
     hints.ai_socktype = SOCK_DGRAM;
 
     int code_error = -1;
-    if ( (code_error = getaddrinfo(argv[1], argv[2], &hints, &server_addr)) != 0) handle_error_gai(code_error, "Error in getaddrinfo()");
+    if ( (code_error = getaddrinfo(argv[1], argv[2], &hints, &result)) != 0) handle_error_gai(code_error, "Error in getaddrinfo()");
 
     int udp_sd = -1;
-    if( (udp_sd = socket(server_addr->ai_family, server_addr->ai_socktype, server_addr->ai_protocol)) == -1) handle_error("Error in socket()"); 
+    if( (udp_sd = socket(result->ai_family, result->ai_socktype, result->ai_protocol)) == -1) handle_error("Error in socket()"); 
     
-    if( sendto(udp_sd, argv[3], sizeof(argv[3]), 0, server_addr->ai_addr, server_addr->ai_addrlen) == -1) handle_error("Error in sendto()");
+    if( sendto(udp_sd, argv[3], sizeof(argv[3]), 0, result->ai_addr, result->ai_addrlen) == -1) handle_error("Error in sendto()");
 
+    freeaddrinfo(result);
     struct sockaddr_storage src_addr;
     socklen_t src_addrlen = sizeof(src_addr);
 

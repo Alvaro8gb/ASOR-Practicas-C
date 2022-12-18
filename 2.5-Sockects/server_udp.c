@@ -8,7 +8,7 @@
 #include <time.h>
 
 #define handle_error_gai(code_error, msg) \
-          do { fprintf(stderr, "Code error: %d msg: %s\n", code_error, gai_strerror(code_error)); exit(EXIT_FAILURE); } while (0)
+          do { fprintf(stderr, "Code error: %d msg: %s : %s\n", code_error, msg, gai_strerror(code_error)); exit(EXIT_FAILURE); } while (0)
 
 #define handle_error(msg) \
           do { perror(msg); exit(EXIT_FAILURE); } while (0)
@@ -47,7 +47,7 @@ int main(int argc, char **argv){
 
     printf("Trying to create service UDP in dir: %s && port %s\n", argv[1], argv[2]);
 
-    struct addrinfo * result = NULL;
+    struct addrinfo * result = NULL, * rp = NULL;
     struct addrinfo hints;
     char buf[3] = "c\n\0";
 
@@ -55,6 +55,8 @@ int main(int argc, char **argv){
 
     hints.ai_family = AF_UNSPEC; // Tanto IPV4 como IPV6
     hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE;
+
 
     int code_error = -1;
     if ( (code_error = getaddrinfo(argv[1], argv[2], &hints, &result)) != 0) handle_error_gai(code_error, "Error in getaddrinfo()");
@@ -63,14 +65,15 @@ int main(int argc, char **argv){
 
     if( (udp_sd = socket(result->ai_family, result->ai_socktype, result->ai_protocol)) ==-1) handle_error("Error in socket()");
 
-    struct sockaddr_storage addr;
-    socklen_t addrlen = sizeof(addr);
-    char host[NI_MAXHOST], serv[NI_MAXSERV];
-
     if( bind(udp_sd, (struct sockaddr *) result->ai_addr, result->ai_addrlen) == -1) handle_error("Error in bind()");
+
+    freeaddrinfo(result);
 
     ssize_t bytes_read;
     int bytes_to_client = 0;
+    struct sockaddr_storage addr;
+    socklen_t addrlen = sizeof(addr);
+    char host[NI_MAXHOST], serv[NI_MAXSERV];
 
     printf("Serving with protocol UDP in port: %s\n", argv[2]);
 
