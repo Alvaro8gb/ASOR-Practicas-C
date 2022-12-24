@@ -43,8 +43,6 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE);
     }
 
-    char msg[BUFF_MESSAGE];
-
     printf("Trying to create service UDP in dir: %s && port %s\n", argv[1], argv[2]);
 
     struct addrinfo * result = NULL;
@@ -69,11 +67,13 @@ int main(int argc, char **argv){
 
     if( bind(udp_sd, (struct sockaddr *) result->ai_addr, result->ai_addrlen) == -1) handle_error("Error in bind()");
 
+    freeaddrinfo(result);
     ssize_t bytes_read;
     int bytes_to_client = 0;
 
     fd_set rfds;
     int retval;   
+    char msg[BUFF_MESSAGE];
 
     printf("Serving with protocol UDP in port: %s\n", argv[2]);
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv){
                 bytes_to_client = get_time(msg, "%Y-%m-%d");
                 break;                
             default: 
-            
+
                 printf("Comando '%c' no soportado\n", buf[0]);
                 bytes_to_client = sizeof(HELP);
                 sprintf(msg, "%s", HELP);

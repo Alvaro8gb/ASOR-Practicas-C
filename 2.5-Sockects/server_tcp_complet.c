@@ -3,10 +3,12 @@
 #include <unistd.h>
 
 #include <sys/socket.h>
+#include <sys/wait.h>
+#include <sys/sysmacros.h>
 #include <netdb.h>
 #include <string.h>
-#include <time.h>                  
-
+#include <time.h>
+#include <signal.h>
 
 #define handle_error_gai(code_error, msg) \
           do { fprintf(stderr, "Code error: %d msg: %s : %s\n", code_error, msg, gai_strerror(code_error)); exit(EXIT_FAILURE); } while (0)
@@ -19,6 +21,14 @@
 
 int BUFF_MESSAGE = 150;
 
+static void handler(int signal){ 
+    int wstatus = 0;
+    pid_t pid = wait(&wstatus);
+    
+    printf("pid: %d end with status: %d\n", pid, WEXITSTATUS(wstatus));
+
+}
+
 int main(int argc, char **argv){
  
     if(argc != 3){
@@ -28,6 +38,14 @@ int main(int argc, char **argv){
 
     printf("Trying to create service TCP in dir: %s && port %s\n", argv[1], argv[2]);
 
+    struct sigaction sa;
+
+    sa.sa_flags = SA_RESTART;
+    if(sigemptyset(&sa.sa_mask) == -1) handle_error("Error in sigemptyset()");
+    sa.sa_handler = (void *)  handler;
+  
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) handle_error("Error in sigaction(SIGINT)");
+    
     struct addrinfo * result = NULL;
     struct addrinfo hints;
 
@@ -73,14 +91,14 @@ int main(int argc, char **argv){
 
             if((code_error = getnameinfo((struct sockaddr *) &client_addr, client_addrlen, host, NI_MAXHOST, serv, NI_MAXSERV, NI_NUMERICHOST|NI_NUMERICSERV)) != 0) handle_error_gai(code_error,"Error in getnameinfo()");
             
-            printf("Conexión desde %s  %s pid: %d\n", host, serv, getpid());
+            printf("Conexión desde %s:%s pid: %d\n", host, serv, getpid());
             
-            while( (bytes_read = recv(client_sd, buf, BUFF_MESSAGE, 0)) > 0){
+           while( (bytes_read = recv(client_sd, buf, BUFF_MESSAGE, 0)) > 0){
 
                 if((buf[0] == 'Q' && bytes_read == 2)){
 
                     close(client_sd);
-                    printf("Conexión terminada desde %s %s pid: %d\n", host, serv, getpid());
+                    printf("Conexión terminada desde %s:%s pid:%d\n", host, serv, getpid());
                     exit(EXIT_SUCCESS);
                     
                 }
@@ -90,9 +108,10 @@ int main(int argc, char **argv){
             }
 
             close(client_sd);
-            handle_error("Error in recv()");
+            printf("Conexión mal terminada desde %s:%s pid: %d\n", host, serv, getpid());
+            exit(EXIT_FAILURE);
 
-                  
+        
         }else{ // Padre accepta las solicitudes
             close(client_sd);
         }

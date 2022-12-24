@@ -22,24 +22,26 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE);
     }
 
-    struct addrinfo * info_array = NULL;
+    struct addrinfo * result = NULL;
     int code_error = -1;
 
     //Specifying  hints  as  NULL  is  equivalent  to setting ai_socktype and
     //   ai_protocol  to  0;   ai_family   to   AF_UNSPEC;   and   ai_flags   to
     //   (AI_V4MAPPED | AI_ADDRCONFIG)
 
-    if ( (code_error = getaddrinfo(argv[1], NULL, NULL, &info_array)) != 0) handle_error_gai(code_error, "Error in getaddrinfo()");
+    if ( (code_error = getaddrinfo(argv[1], NULL, NULL, &result)) != 0) handle_error_gai(code_error, "Error in getaddrinfo()");
 
     printf("host\tfamlily\tsocktype\n");
     char host[MAX_HOST];
 
-    for (struct addrinfo *rp = info_array; rp != NULL; rp = rp->ai_next) {
+    for (struct addrinfo *rp = result; rp != NULL; rp = rp->ai_next) {
 
         if ( (code_error = getnameinfo(rp->ai_addr, rp->ai_addrlen, host, MAX_HOST, NULL, 0, NI_NUMERICHOST)) != 0) handle_error_gai(code_error, "Error in getnameinfo()");
             
         printf("%s\t%d\t%d\n",host, rp->ai_family, rp->ai_socktype);
     }
+
+    freeaddrinfo(result);
 
     return 0;
 }

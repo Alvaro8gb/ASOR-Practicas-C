@@ -43,8 +43,6 @@ int main(int argc, char **argv){
         exit(EXIT_FAILURE);
     }
 
-    char msg[BUFF_MESSAGE];
-
     printf("Trying to create service UDP in dir: %s && port %s\n", argv[1], argv[2]);
 
     struct addrinfo * result = NULL, * rp = NULL;
@@ -56,7 +54,6 @@ int main(int argc, char **argv){
     hints.ai_family = AF_UNSPEC; // Tanto IPV4 como IPV6
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE;
-
 
     int code_error = -1;
     if ( (code_error = getaddrinfo(argv[1], argv[2], &hints, &result)) != 0) handle_error_gai(code_error, "Error in getaddrinfo()");
@@ -74,6 +71,7 @@ int main(int argc, char **argv){
     struct sockaddr_storage addr;
     socklen_t addrlen = sizeof(addr);
     char host[NI_MAXHOST], serv[NI_MAXSERV];
+    char msg[BUFF_MESSAGE];
 
     printf("Serving with protocol UDP in port: %s\n", argv[2]);
 
