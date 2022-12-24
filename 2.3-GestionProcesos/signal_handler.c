@@ -32,17 +32,17 @@ void add_signal2set(sigset_t * set, int signal){
  
 int main(){
  
-   struct sigaction sa;
    sigset_t block_signals;
  
    if(sigemptyset(&block_signals) == -1) handle_error("Error in sigemptyset()");
    add_signal2set(&block_signals, SIGINT );
    add_signal2set(&block_signals, SIGTSTP);
  
- 
+   struct sigaction sa;
+
    sa.sa_flags = SA_SIGINFO;
    if(sigemptyset(&sa.sa_mask) == -1) handle_error("Error in sigemptyset()");
-   sa.sa_sigaction = (void *)  handler;
+   sa.sa_handler = (void *)  handler;
   
    if (sigaction(SIGINT, &sa, NULL) == -1) handle_error("Error in sigaction(SIGINT)");
    if (sigaction(SIGTSTP, &sa, NULL) == -1) handle_error("Error in sigaction(SIGTSTP)");
