@@ -21,8 +21,8 @@ int main(int argc, char ** argv){
     int pipefd[2];
     if ( pipe(pipefd) == -1) handle_error("Error in pipe()");
 
-    //pipefd[0] -> extremo de escritura
-    //pipefd[1] -> extremo de lectura
+    //pipefd[0] -> extremo de lectura
+    //pipefd[1] -> extremo de escritura
 
     pid_t pid = fork();
 

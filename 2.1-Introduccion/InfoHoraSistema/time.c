@@ -38,7 +38,7 @@ int loop_to_size(){
         return 1;
     }
     
-    printf("Time to execute the loop is : %ld  microseconds \n",end.tv_usec - start.tv_usec);
+    printf("Time to execute the loop is : seconds : %ld  microseconds: %ld \n",end.tv_sec - start.tv_sec, end.tv_usec - start.tv_usec);
 }
 void show_current_year(){
 

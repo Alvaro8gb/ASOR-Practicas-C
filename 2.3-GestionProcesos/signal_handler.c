@@ -50,7 +50,7 @@ int main(){
    while (N_SIGINT + N_SIGTSTP < 10 ){
       sigsuspend(&sa.sa_mask);
    }
- 
+
    if ( sigprocmask(SIG_BLOCK, &block_signals, NULL) == -1) handle_error("Error in sigaction(SIGTSTP)");
  
    printf("\nNumber of SIGINT: %d\n", N_SIGINT);

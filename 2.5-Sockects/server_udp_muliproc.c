@@ -71,6 +71,8 @@ int main(int argc, char **argv){
 
     if( bind(udp_sd, (struct sockaddr *) result->ai_addr, result->ai_addrlen) == -1) handle_error("Error in bind()");
 
+    freeaddrinfo(result);
+
     ssize_t bytes_read;
     int bytes_to_client = 0;
 

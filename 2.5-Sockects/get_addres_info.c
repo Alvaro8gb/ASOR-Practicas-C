@@ -10,8 +10,6 @@
 
 #define USAGE  "Usage: %s addr_dir\n"
 
-socklen_t MAX_HOST = 200;
-
 // Las familias 2 y 10 son AF_INET y AF_INET6, respectivamente (ver socket.h)
 // Los tipos 1, 2, 3 son SOCK_STREAM, SOCK_DGRAM y SOCK_RAW, respectivamente 
 
@@ -32,11 +30,11 @@ int main(int argc, char **argv){
     if ( (code_error = getaddrinfo(argv[1], NULL, NULL, &result)) != 0) handle_error_gai(code_error, "Error in getaddrinfo()");
 
     printf("host\tfamlily\tsocktype\n");
-    char host[MAX_HOST];
+    char host[NI_MAXHOST];
 
     for (struct addrinfo *rp = result; rp != NULL; rp = rp->ai_next) {
 
-        if ( (code_error = getnameinfo(rp->ai_addr, rp->ai_addrlen, host, MAX_HOST, NULL, 0, NI_NUMERICHOST)) != 0) handle_error_gai(code_error, "Error in getnameinfo()");
+        if ( (code_error = getnameinfo(rp->ai_addr, rp->ai_addrlen, host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST)) != 0) handle_error_gai(code_error, "Error in getnameinfo()");
             
         printf("%s\t%d\t%d\n",host, rp->ai_family, rp->ai_socktype);
     }

@@ -10,7 +10,6 @@
 #define handle_error(msg) \
           do { perror(msg); exit(EXIT_FAILURE); } while (0)
  
-
 #define MAX_PATH 200
 
 int main(){
