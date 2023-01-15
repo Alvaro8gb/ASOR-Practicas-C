@@ -5,7 +5,6 @@
 
 
 int main(){
- 
 
    for(int i = 1; i<255; i++){
          printf("Codigo de error :%d \t Mensaje asociado: %s\n",i, strerror(i));
